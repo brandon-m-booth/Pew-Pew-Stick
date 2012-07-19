@@ -112,6 +112,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\seven_segment_display.c"
+			>
+		</File>
+		<File
+			RelativePath=".\seven_segment_display.h"
+			>
+		</File>
+		<File
 			RelativePath=".\usb_gamepad.c"
 			>
 		</File>

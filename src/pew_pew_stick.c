@@ -32,13 +32,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "usb_gamepad.h"
 #include "controller.h"
 #include "input_filter.h"
+#include "seven_segment_display.h"
 
 uint8_t pins[NUM_CONTROLLER_STATE_BYTES];
 
 int main(void)
 {
   /* Set 16 MHz clock */
-  CPU_PRESCALE(CPU_16MHz);
+  CPU_PRESCALE(CPU_62kHz);
   LED_CONFIG;
   LED_ON;
 
@@ -51,64 +52,71 @@ int main(void)
   struct InputFilter inputFilter;
 
   /* Initialize controller */
-  init_controller(&controller, PARALLEL_TYPE);
+  //init_controller(&controller, PARALLEL_TYPE);
 
   /* Initialize controller input filter */
-  init_input_filter(&inputFilter);
+  //init_input_filter(&inputFilter);
+
+  /* Initialize seven segment display */
+  init_seven_segment_display();
+  set_seven_segment_display_number(1);
 
   /* Main loop. */
   for(;;)
   {
-    /* Get the current input state of the controller */
-    get_controller_state(&controller, pins);
+    LED_OFF;
+    //set_seven_segment_display_number(1);
 
-    /* Filter the raw input data */
-    filter_input(&inputFilter, pins);
+    ///* Get the current input state of the controller */
+    //get_controller_state(&controller, pins);
 
-    /* Joystick motion */
-    uint8_t x = DIR_NULL;
-    uint8_t y = DIR_NULL;
-    if (pins[1] & D_LT)
-      x = DIR_LEFT;
-    else if (pins[1] & D_RT)
-      x = DIR_RIGHT;
-    if (pins[1] & D_UP)
-      y = DIR_UP;
-    else if (pins[1] & D_DN)
-      y = DIR_DOWN;
+    ///* Filter the raw input data */
+    //filter_input(&inputFilter, pins);
 
-    /* Button presses */
-    uint8_t b[2] = {0};
-    if (pins[1] & B_01)
-      b[0] |= BUTTON_01;
-    if (pins[1] & B_02)
-      b[0] |= BUTTON_02;
-    if (pins[1] & B_03)
-      b[0] |= BUTTON_03;
-    if (pins[1] & B_04)
-      b[0] |= BUTTON_04;
-    if (pins[0] & B_05)
-      b[0] |= BUTTON_05;
-    if (pins[0] & B_06)
-      b[0] |= BUTTON_06;
-    if (pins[0] & B_07)
-      b[0] |= BUTTON_07;
-    if (pins[0] & B_08)
-      b[0] |= BUTTON_08;
-    if (pins[0] & B_09)
-      b[1] |= BUTTON_09;
-    if (pins[0] & B_10)
-      b[1] |= BUTTON_10;
-    if (pins[0] & B_11)
-      b[1] |= BUTTON_11;
-    if (pins[0] & B_12)
-      b[1] |= BUTTON_12;
+    ///* Joystick motion */
+    //uint8_t x = DIR_NULL;
+    //uint8_t y = DIR_NULL;
+    //if (pins[1] & D_LT)
+    //  x = DIR_LEFT;
+    //else if (pins[1] & D_RT)
+    //  x = DIR_RIGHT;
+    //if (pins[1] & D_UP)
+    //  y = DIR_UP;
+    //else if (pins[1] & D_DN)
+    //  y = DIR_DOWN;
 
-    usb_gamepad_action(x, y, b);
-    if (x != 128 || y != 128 || b[0] != 0 || b[1] != 0)
-      LED_ON;
-    else
-      LED_OFF;
+    ///* Button presses */
+    //uint8_t b[2] = {0};
+    //if (pins[1] & B_01)
+    //  b[0] |= BUTTON_01;
+    //if (pins[1] & B_02)
+    //  b[0] |= BUTTON_02;
+    //if (pins[1] & B_03)
+    //  b[0] |= BUTTON_03;
+    //if (pins[1] & B_04)
+    //  b[0] |= BUTTON_04;
+    //if (pins[0] & B_05)
+    //  b[0] |= BUTTON_05;
+    //if (pins[0] & B_06)
+    //  b[0] |= BUTTON_06;
+    //if (pins[0] & B_07)
+    //  b[0] |= BUTTON_07;
+    //if (pins[0] & B_08)
+    //  b[0] |= BUTTON_08;
+    //if (pins[0] & B_09)
+    //  b[1] |= BUTTON_09;
+    //if (pins[0] & B_10)
+    //  b[1] |= BUTTON_10;
+    //if (pins[0] & B_11)
+    //  b[1] |= BUTTON_11;
+    //if (pins[0] & B_12)
+    //  b[1] |= BUTTON_12;
+
+    //usb_gamepad_action(x, y, b);
+    //if (x != 128 || y != 128 || b[0] != 0 || b[1] != 0)
+    //  LED_ON;
+    //else
+    //  LED_OFF;
   }
 
   LED_OFF;
