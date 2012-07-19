@@ -29,17 +29,18 @@
 #include "seven_segment_display.h"
 #include "macros.h"
 
+#define MAX_NUM_DIGITS (3)
+uint8_t digitPins[MAX_NUM_DIGITS];
+void set_digit_bits(uint8_t digitIndex, uint8_t numberInHex);
+
 void init_seven_segment_display(void)
 {
-  // Set SS, SCLK, and PIND_0 as output.
-  DDRB = PORT_CONFIG_OUTPUT;
-  DDRD = PORT_CONFIG_OUTPUT;
-  //DDRB |= PIN_00|PIN_01|PIN_02;
-  //DDRD |= PIN_00|PIN_01;
+  // Setup output pins
+  DDRB |= PIN_00|PIN_01|PIN_02;
+  DDRD |= PIN_00|PIN_01;
 
   // Enable SPI, set to Master mode, set clock rate to fck/16
-  //SPCR |= (1<<SPE)|(1<<MSTR)|(1<<SPR0);
-  //SPCR &= ~(1<<CPOL);
+  SPCR |= (1<<SPE)|(1<<MSTR);//|(1<<SPR0);
 
   // Set SCK frequency to fOSC/2.
   //SPSR |= (1<<SPI2X);
@@ -51,6 +52,17 @@ void init_seven_segment_display(void)
   // Enable the slave SPI device set the parallel load low.
   PORTB &= ~PIN_00;
   PORTD &= ~PIN_00;
+}
+
+void set_seven_segment_display_number(uint16_t number)
+{
+  set_digit_bits(0, 9);
+
+  // Write out the current seven-segment state
+  SPDR = digitPins[0];
+
+  // Wait for transmission to complete
+  while(!(SPSR & (1<<SPIF))) {}
 
   // Load the serial bits into the parallel output pins
   PORTD |= PIN_00;
@@ -59,45 +71,78 @@ void init_seven_segment_display(void)
   PORTD &= ~PIN_00;
 }
 
-void set_seven_segment_display_number(uint16_t number)
+// Helper function to set the bits in the serial stream to make the target digit at the given
+// index display the decimal equivalent of the input hex number.
+//
+// Assumes the pins are mapped to the seven segment display in the following way:
+//
+// Bit order:    0, 1, 2, 3, 4, 5, 6, 7
+// Pin mapping:  H, G, F, E, D, C, B, A
+// Pin arrangement:
+//                    _c__
+//                  b|    |d
+//                   |_a__|
+//                  g|    |e
+//                   |_f__| .h
+//
+void set_digit_bits(uint8_t digitIndex, uint8_t numberInHex)
 {
-  // TODO - Get the current state and translate into binary stream for the display
+    if (digitIndex >= MAX_NUM_DIGITS)
+        return;
 
-  //PORTB |= PIN_00; // Deselect slave device
-
-  // Enable the slave SPI device
-  //PORTB &= ~PIN_00;
-
-  // Write out the current seven-segment state
-  //SPDR = 0xFF;
-
-  // Wait for transmission to complete
-  //while(!(SPSR & (1<<SPIF))) {}
-
-  PORTB |= PIN_02; // Write out serial bit high
-  PORTB &= ~PIN_01; // Clock low
-  PORTB |= PIN_01; // Clock high
-  PORTB &= ~PIN_01; // Clock low
-  PORTB |= PIN_01; // Clock high
-  PORTB &= ~PIN_01; // Clock low
-  PORTB |= PIN_01; // Clock high
-  PORTB &= ~PIN_01; // Clock low
-  PORTB |= PIN_01; // Clock high
-  PORTB &= ~PIN_01; // Clock low
-  PORTB |= PIN_01; // Clock high
-  PORTB &= ~PIN_01; // Clock low
-  PORTB |= PIN_01; // Clock high
-  PORTB &= ~PIN_01; // Clock low
-  PORTB |= PIN_01; // Clock high
-  PORTB &= ~PIN_01; // Clock low
-  PORTB |= PIN_01; // Clock high
-
-  // Load the serial bits into the parallel output pins
-  PORTD |= PIN_00;
-
-  // Return the parallel load pin to low
-  PORTD &= ~PIN_00;
-
-  // Disable the slave SPI device
-  //PORTB |= PIN_00;
+    switch(numberInHex)
+    {
+    case 0x0:
+        digitPins[digitIndex] = 0x01111110;
+        break;
+    case 0x1:
+        digitPins[digitIndex] = 0x00011000;
+        break;
+    case 0x2:
+        digitPins[digitIndex] = 0x01101101;
+        break;
+    case 0x3:
+        digitPins[digitIndex] = 0x00111101;
+        break;
+    case 0x4:
+        digitPins[digitIndex] = 0x00011011;
+        break;
+    case 0x5:
+        digitPins[digitIndex] = 0x00110111;
+        break;
+    case 0x6:
+        digitPins[digitIndex] = 0x01110111;
+        break;
+    case 0x7:
+        digitPins[digitIndex] = 0x00011100;
+        break;
+    case 0x8:
+        digitPins[digitIndex] = 0x01111111;
+        break;
+    case 0x9:
+        digitPins[digitIndex] = 0x00111111;
+        break;
+    case 0xA:
+        digitPins[digitIndex] = 0x01011111;
+        break;
+    case 0xB:
+        digitPins[digitIndex] = 0x01110011;
+        break;
+    case 0xC:
+        digitPins[digitIndex] = 0x01100110;
+        break;
+    case 0xD:
+        digitPins[digitIndex] = 0x01111001;
+        break;
+    case 0xE:
+        digitPins[digitIndex] = 0x01100111;
+        break;
+    case 0xF:
+        digitPins[digitIndex] = 0x01000111;
+        break;
+    default:
+        // Turn them all on (why not?)!
+        digitPins[digitIndex] = 0x11111111;
+        break;
+    }
 }
