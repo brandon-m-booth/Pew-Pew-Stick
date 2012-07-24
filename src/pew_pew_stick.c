@@ -39,7 +39,7 @@ uint8_t pins[NUM_CONTROLLER_STATE_BYTES];
 int main(void)
 {
   /* Set 16 MHz clock */
-  CPU_PRESCALE(CPU_62kHz);
+  CPU_PRESCALE(CPU_1MHz);
   LED_CONFIG;
   LED_ON;
 
@@ -59,12 +59,32 @@ int main(void)
 
   /* Initialize seven segment display */
   init_seven_segment_display();
-  set_seven_segment_display_number(1);
-
+  LED_OFF;
+  
+  uint16_t timer = 0;
+  uint8_t counter = 0;
   /* Main loop. */
   for(;;)
   {
-    LED_OFF;
+    if (timer >= 65535)
+	{
+	  set_seven_segment_display_number(counter);
+	  timer = 0;
+
+	  if (counter >= 0xF)
+	  {
+		  counter = 0;
+	  }
+	  else
+	  {
+		  ++counter;
+	  }
+	}
+	else
+	{
+	  ++timer;
+	}
+
     //set_seven_segment_display_number(1);
 
     ///* Get the current input state of the controller */

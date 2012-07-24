@@ -52,11 +52,33 @@ void init_seven_segment_display(void)
   // Enable the slave SPI device set the parallel load low.
   PORTB &= ~PIN_00;
   PORTD &= ~PIN_00;
+
+  clear_seven_segment_display();
+}
+
+void clear_seven_segment_display()
+{
+  for (int i = 0; i < MAX_NUM_DIGITS; ++i)
+  {
+    digitPins[i] = 0b00000000;
+  }
+
+  // Write out the current seven-segment state
+  SPDR = digitPins[0];
+
+  // Wait for transmission to complete
+  while(!(SPSR & (1<<SPIF))) {}
+
+  // Load the serial bits into the parallel output pins
+  PORTD |= PIN_00;
+
+  // Return the parallel load pin to low
+  PORTD &= ~PIN_00;
 }
 
 void set_seven_segment_display_number(uint16_t number)
 {
-  set_digit_bits(0, 9);
+  set_digit_bits(0, number);
 
   // Write out the current seven-segment state
   SPDR = digitPins[0];
@@ -93,56 +115,56 @@ void set_digit_bits(uint8_t digitIndex, uint8_t numberInHex)
     switch(numberInHex)
     {
     case 0x0:
-        digitPins[digitIndex] = 0x01111110;
+        digitPins[digitIndex] = 0b01111110;
         break;
     case 0x1:
-        digitPins[digitIndex] = 0x00011000;
+        digitPins[digitIndex] = 0b00011000;
         break;
     case 0x2:
-        digitPins[digitIndex] = 0x01101101;
+        digitPins[digitIndex] = 0b01101101;
         break;
     case 0x3:
-        digitPins[digitIndex] = 0x00111101;
+        digitPins[digitIndex] = 0b00111101;
         break;
     case 0x4:
-        digitPins[digitIndex] = 0x00011011;
+        digitPins[digitIndex] = 0b00011011;
         break;
     case 0x5:
-        digitPins[digitIndex] = 0x00110111;
+        digitPins[digitIndex] = 0b00110111;
         break;
     case 0x6:
-        digitPins[digitIndex] = 0x01110111;
+        digitPins[digitIndex] = 0b01110111;
         break;
     case 0x7:
-        digitPins[digitIndex] = 0x00011100;
+        digitPins[digitIndex] = 0b00011100;
         break;
     case 0x8:
-        digitPins[digitIndex] = 0x01111111;
+        digitPins[digitIndex] = 0b01111111;
         break;
     case 0x9:
-        digitPins[digitIndex] = 0x00111111;
+        digitPins[digitIndex] = 0b00111111;
         break;
     case 0xA:
-        digitPins[digitIndex] = 0x01011111;
+        digitPins[digitIndex] = 0b01011111;
         break;
     case 0xB:
-        digitPins[digitIndex] = 0x01110011;
+        digitPins[digitIndex] = 0b01110011;
         break;
     case 0xC:
-        digitPins[digitIndex] = 0x01100110;
+        digitPins[digitIndex] = 0b01100110;
         break;
     case 0xD:
-        digitPins[digitIndex] = 0x01111001;
+        digitPins[digitIndex] = 0b01111001;
         break;
     case 0xE:
-        digitPins[digitIndex] = 0x01100111;
+        digitPins[digitIndex] = 0b01100111;
         break;
     case 0xF:
-        digitPins[digitIndex] = 0x01000111;
+        digitPins[digitIndex] = 0b01000111;
         break;
     default:
         // Turn them all on (why not?)!
-        digitPins[digitIndex] = 0x11111111;
+        digitPins[digitIndex] = 0b11111111;
         break;
     }
 }
