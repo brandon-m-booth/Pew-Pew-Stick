@@ -29,7 +29,7 @@
 #include "seven_segment_display.h"
 #include "macros.h"
 
-#define MAX_NUM_DIGITS (2)
+#define MAX_NUM_DIGITS (3)
 uint8_t digitPins[MAX_NUM_DIGITS];
 void set_digit_bits(uint8_t digitIndex, uint8_t numberInHex);
 

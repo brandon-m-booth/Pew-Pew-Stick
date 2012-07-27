@@ -28,18 +28,41 @@
 #include "seven_segment_display.h"
 #include "macros.h"
 #include "pins.h"
+#include <avr/io.h>
+#include <avr/interrupt.h>
 
-uint16_t apmCounter;
+volatile uint16_t actionCounter;
+volatile uint16_t apm; // Actions per second
+const uint16_t runningAvgSamplePercent = 2; // Expressed as a whole number from [0-100]
 uint8_t previousInputState[NUM_CONTROLLER_STATE_BYTES];
+
+ISR(TIMER1_COMPA_vect)
+{
+  apm = (runningAvgSamplePercent*60*actionCounter + (100-runningAvgSamplePercent)*apm)/100;
+  actionCounter = 0;
+}
 
 void init_apm_counter(void)
 {
   reset_apm_counter();
+
+  // Initialize timer counter 1 (16-bit) and enable a timer interrupt every second
+  //GTCCR = 0x81;   // Reset timer prescaler
+  TCCR1A = 0xC0;  // Set timer 1 to compare match A
+  TCCR1B = 0x0C;  // Use clk/256 prescaler and CTC timer counting mode
+  OCR1A = 0xF424; // Count to 62500 to generate a timer match
+  GTCCR = 0x80;   // Set timer control register to not reset prescaler
+
+  TIFR1 |= (1<<OCF1A);   // Reset interrupt trigger for timer1 compare A
+  TIMSK1 |= (1<<OCIE1A); // Enable interrupts for timer1 compare A
 }
 
 void reset_apm_counter(void)
 {
-  apmCounter = 0;
+  TIMSK1 &= ~(1<<OCIE1A); // Disable timer 1 compare A interrupts
+  actionCounter = 0;
+  apm = 0;
+  TIMSK1 |= (1<<OCIE1A);  // Enable the interrupt again
   for (int i = 0; i < NUM_CONTROLLER_STATE_BYTES; ++i)
   {
     previousInputState[i] = 0x00;
@@ -61,7 +84,10 @@ void update_apm_counter(uint8_t* inputStates)
     previousInputState[i] = inputStates[i];
   }
 
-  apmCounter += numActions;
+  TIMSK1 &= ~(1<<OCIE1A); // Disable timer 1 compare A interrupts
+  actionCounter += numActions;
+  uint16_t displayApm = apm;
+  TIMSK1 |= (1<<OCIE1A);  // Enable the interrupt again
 
-  set_seven_segment_display_number(apmCounter);
+  set_seven_segment_display_number(displayApm);
 }
