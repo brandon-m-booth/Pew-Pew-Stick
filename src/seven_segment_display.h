@@ -35,6 +35,8 @@
 // Must be called once to initialize SPI output and the the display array
 void init_seven_segment_display(void);
 
+void clear_seven_segment_display(void);
+
 // Sets the display array to the input number
 void set_seven_segment_display_number(uint16_t number);
 

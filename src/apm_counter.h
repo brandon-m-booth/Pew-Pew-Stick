@@ -24,35 +24,25 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <avr/io.h>
-#include <avr/pgmspace.h>
-#include "parallel_controller.h"
-#include "macros.h"
+#ifndef __APM_COUNTER__
+#define __APM_COUNTER__
 
-void init_controller_parallel(void)
-{
-  //DDRB |= PORT_CONFIG_INPUT; // Configure PortB as an input port
-  //DDRD |= PORT_CONFIG_INPUT; // Configure PortD as an input port
-  DDRF |= PORT_CONFIG_INPUT; // Configure PortF as an input port
-  //PORTB |= (PIN_00 | PIN_01 | PIN_03 | PIN_04 | PIN_05 | PIN_06); // Enable internal pull-up resistors
-  //PORTD |= (PIN_01);
-  PORTF |= (PIN_00 | PIN_01 | PIN_04 | PIN_05 | PIN_06 | PIN_07);
-}
+#include <stdint.h>
 
-void get_controller_state_parallel(uint8_t pins[NUM_CONTROLLER_STATE_BYTES])
-{
-  pins[0] = 0;
-  pins[1] = 0;
-  //pins[0] |= (PINF & PIN_07) ? 0 : B_05;
-  //pins[0] |= (PINB & PIN_06) ? 0 : B_06;
-  //pins[0] |= (PINB & PIN_05) ? 0 : B_07;
-  //pins[0] |= (PINB & PIN_04) ? 0 : B_08;
-  pins[1] |= (PINF & PIN_00) ? 0 : D_UP;
-  pins[1] |= (PINF & PIN_01) ? 0 : D_DN;
-  pins[1] |= (PINF & PIN_04) ? 0 : D_LT;
-  pins[1] |= (PINF & PIN_05) ? 0 : D_RT;
-  //pins[1] |= (PINF & PIN_01) ? 0 : B_01;
-  //pins[1] |= (PINF & PIN_04) ? 0 : B_02;
-  //pins[1] |= (PINF & PIN_05) ? 0 : B_03;
-  //pins[1] |= (PINF & PIN_06) ? 0 : B_04;
-}
+// Counts the number of actions per minute of the user given a periodic
+// snapshot of the button state.  The APM is displayed using the
+// seven-segment display
+
+// Must be called once to initialize the APM counter.  This function does
+// not initialize the seven-segment display, so the caller needs to ensure
+// that devices has been initialized already.
+void init_apm_counter(void);
+
+void reset_apm_counter(void);
+
+// Measure the number of "actions" performed given the input button state
+// and accumulates it with the number of "actions" previously tallied from
+// prior invokations of this function.
+void update_apm_counter(uint8_t* inputStates);
+
+#endif

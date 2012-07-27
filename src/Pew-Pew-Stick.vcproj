@@ -88,6 +88,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\apm_counter.c"
+			>
+		</File>
+		<File
+			RelativePath=".\apm_counter.h"
+			>
+		</File>
+		<File
 			RelativePath=".\input_filter.c"
 			>
 		</File>

@@ -52,7 +52,8 @@ SRC =	$(TARGET).c \
 	serial_controller.c \
 	parallel_controller.c \
 	input_filter.c \
-	seven_segment_display.c
+	seven_segment_display.c \
+	apm_counter.c
 
 # MCU name, you MUST set this to match the board you are using
 # type "make clean" after changing this, so all files will be rebuilt

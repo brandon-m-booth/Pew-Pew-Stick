@@ -29,7 +29,7 @@
 #include "seven_segment_display.h"
 #include "macros.h"
 
-#define MAX_NUM_DIGITS (3)
+#define MAX_NUM_DIGITS (2)
 uint8_t digitPins[MAX_NUM_DIGITS];
 void set_digit_bits(uint8_t digitIndex, uint8_t numberInHex);
 
@@ -56,7 +56,7 @@ void init_seven_segment_display(void)
   clear_seven_segment_display();
 }
 
-void clear_seven_segment_display()
+void clear_seven_segment_display(void)
 {
   for (int i = 0; i < MAX_NUM_DIGITS; ++i)
   {
@@ -78,13 +78,21 @@ void clear_seven_segment_display()
 
 void set_seven_segment_display_number(uint16_t number)
 {
-  set_digit_bits(0, number);
+  int8_t digitsCounter = 0;
+  for (uint16_t digitsLeft = number; digitsCounter < MAX_NUM_DIGITS; digitsLeft /= 10)
+  {
+    set_digit_bits(digitsCounter, digitsLeft%10);
+    ++digitsCounter;
+  }
 
-  // Write out the current seven-segment state
-  SPDR = digitPins[0];
+  for (int i = 0; i < MAX_NUM_DIGITS; ++i)
+  {
+	  // Write out the current seven-segment state
+	  SPDR = digitPins[i];
 
-  // Wait for transmission to complete
-  while(!(SPSR & (1<<SPIF))) {}
+	  // Wait for transmission to complete
+	  while(!(SPSR & (1<<SPIF))) {}
+  }
 
   // Load the serial bits into the parallel output pins
   PORTD |= PIN_00;
