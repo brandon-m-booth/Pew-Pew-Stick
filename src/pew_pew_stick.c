@@ -42,6 +42,7 @@ int main(void)
   CPU_PRESCALE(CPU_16MHz);
   LED_CONFIG;
   LED_ON;
+  //DDRC |= (1<<7);
 
   /* Initialize the USB interface */
   usb_init();
@@ -118,9 +119,15 @@ int main(void)
 
     usb_gamepad_action(x, y, b);
     if (x != 128 || y != 128 || b[0] != 0 || b[1] != 0)
+	{
+      //PORTC |= (1<<7);
       LED_ON;
+	}
     else
+	{
+      //PORTC &= ~(1<<7);
       LED_OFF;
+	}
   }
 
   LED_OFF;
