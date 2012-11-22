@@ -46,14 +46,19 @@ TARGET = pew_pew_stick
 
 # List C source files here. (C dependencies are automatically generated.)
 SRC =	$(TARGET).c \
+	device.c \
 	usb_gamepad.c \
 	usb_profiles.c \
+	game_pad_device.c \
 	controller.c \
 	serial_controller.c \
 	parallel_controller.c \
 	input_filter.c \
 	seven_segment_display.c \
 	apm_counter.c
+
+#keyboard_device.c
+#usb_keyboard.c
 
 # MCU name, you MUST set this to match the board you are using
 # type "make clean" after changing this, so all files will be rebuilt

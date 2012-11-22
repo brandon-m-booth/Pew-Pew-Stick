@@ -1,6 +1,6 @@
 /*
   Pew Pew Stick Microcontroller Code
-  Copyright (c) 2012, Matt Stine
+  Copyright (c) 2012, Matt Stine, Brandon Booth
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -24,30 +24,19 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef __PINS_H__
-#define __PINS_H__
+#ifndef __KEYBOARD_DEVICE__
+#define __KEYBOARD_DEVICE__
 
-/* Number of bytes to store controller state */
-#define NUM_CONTROLLER_STATE_BYTES 2
+#include <stdint.h>
+#include "pins.h"
 
-/* First controller state byte's bit assignment */
-#define B_05 (1<<7)
-#define B_06 (1<<6)
-#define B_07 (1<<5)
-#define B_08 (1<<4)
-#define B_09 (1<<3)
-#define B_10 (1<<2)
-#define B_11 (1<<1)
-#define B_12 (1<<0)
+// Initializes this hardware device as a keyboard with the host OS via the HID interface.
+// Provides methods to update the device state based on the controller's pin state.
 
-/* Second controller state byte's bit assignment */
-#define D_LT (1<<7)
-#define D_RT (1<<6)
-#define D_UP (1<<5)
-#define D_DN (1<<4)
-#define B_01 (1<<3)
-#define B_02 (1<<2)
-#define B_03 (1<<1)
-#define B_04 (1<<0)
+// Must be called once to initialize the keyboard device interface.
+void init_keyboard_device(void);
+
+// Updates and uploads the state of the device to the host OS based on the pin state
+void update_keyboard_device_pin_state(uint8_t pins[NUM_CONTROLLER_STATE_BYTES]);
 
 #endif

@@ -1,6 +1,6 @@
 /*
   Pew Pew Stick Microcontroller Code
-  Copyright (c) 2012, Matt Stine
+  Copyright (c) 2012, Matt Stine, Brandon Booth
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -24,30 +24,31 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef __PINS_H__
-#define __PINS_H__
+#ifndef __DEVICE__
+#define __DEVICE__
 
-/* Number of bytes to store controller state */
-#define NUM_CONTROLLER_STATE_BYTES 2
+#include <stdint.h>
+#include "pins.h"
 
-/* First controller state byte's bit assignment */
-#define B_05 (1<<7)
-#define B_06 (1<<6)
-#define B_07 (1<<5)
-#define B_08 (1<<4)
-#define B_09 (1<<3)
-#define B_10 (1<<2)
-#define B_11 (1<<1)
-#define B_12 (1<<0)
+// Base device that routes function calls to the appropriate
+// device implementation based on the input enum at
+// initialization.
 
-/* Second controller state byte's bit assignment */
-#define D_LT (1<<7)
-#define D_RT (1<<6)
-#define D_UP (1<<5)
-#define D_DN (1<<4)
-#define B_01 (1<<3)
-#define B_02 (1<<2)
-#define B_03 (1<<1)
-#define B_04 (1<<0)
+enum DeviceType
+{
+  GAME_PAD_DEVICE_TYPE,
+  KEYBOARD_DEVICE_TYPE
+};
+
+struct Device
+{
+  enum DeviceType deviceType;
+};
+
+// Must be called once to initialize the device.
+void init_device(struct Device* device, enum DeviceType deviceType);
+
+// Updates the device state and transmits button presses to the host OS
+void update_device_pin_state(struct Device* device, uint8_t pins[NUM_CONTROLLER_STATE_BYTES]);
 
 #endif

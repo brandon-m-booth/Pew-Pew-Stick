@@ -60,7 +60,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Controller"
+			Name="ControllerInputState"
 			>
 			<File
 				RelativePath=".\controller.c"
@@ -84,6 +84,34 @@
 			</File>
 			<File
 				RelativePath=".\serial_controller.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="ControllerDeviceType"
+			>
+			<File
+				RelativePath=".\device.c"
+				>
+			</File>
+			<File
+				RelativePath=".\device.h"
+				>
+			</File>
+			<File
+				RelativePath=".\game_pad_device.c"
+				>
+			</File>
+			<File
+				RelativePath=".\game_pad_device.h"
+				>
+			</File>
+			<File
+				RelativePath=".\keyboard_device.c"
+				>
+			</File>
+			<File
+				RelativePath=".\keyboard_device.h"
 				>
 			</File>
 		</Filter>
@@ -133,6 +161,14 @@
 		</File>
 		<File
 			RelativePath=".\usb_gamepad.h"
+			>
+		</File>
+		<File
+			RelativePath=".\usb_keyboard.c"
+			>
+		</File>
+		<File
+			RelativePath=".\usb_keyboard.h"
 			>
 		</File>
 		<File

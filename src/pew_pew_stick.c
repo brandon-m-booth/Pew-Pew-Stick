@@ -29,10 +29,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pins.h"
 #include "macros.h"
-#include "usb_gamepad.h"
 #include "controller.h"
+#include "device.h"
 #include "input_filter.h"
 #include "seven_segment_display.h"
+#include "apm_counter.h"
 
 uint8_t pins[NUM_CONTROLLER_STATE_BYTES];
 
@@ -41,16 +42,15 @@ int main(void)
   /* Set 16 MHz clock */
   CPU_PRESCALE(CPU_16MHz);
   LED_CONFIG;
-  LED_ON;
-  //DDRC |= (1<<7);
+  //LED_ON;
+  DDRC |= PIN_07;
 
-  /* Initialize the USB interface */
-  usb_init();
-  while (!usb_configured());
-
+  struct Device device;
   struct Controller controller;
-
   struct InputFilter inputFilter;
+
+  /* Initialize device */
+  init_device(&device, GAME_PAD_DEVICE_TYPE);
 
   /* Initialize controller */
   init_controller(&controller, PARALLEL_TYPE);
@@ -64,7 +64,7 @@ int main(void)
   /* Initialize apm (actions per minute) counter */
   init_apm_counter();
 
-  LED_OFF;
+  //LED_OFF;
   
   /* Main loop. */
   for(;;)
@@ -78,57 +78,25 @@ int main(void)
     /* Update the APM counter */
     update_apm_counter(pins);
 
-    /* Joystick motion */
-    uint8_t x = DIR_NULL;
-    uint8_t y = DIR_NULL;
-    if (pins[1] & D_LT)
-      x = DIR_LEFT;
-    else if (pins[1] & D_RT)
-      x = DIR_RIGHT;
-    if (pins[1] & D_UP)
-      y = DIR_UP;
-    else if (pins[1] & D_DN)
-      y = DIR_DOWN;
+    /* Update the device state and transmit the input state */
+    update_device_pin_state(&device, pins);
 
-    /* Button presses */
-    uint8_t b[2] = {0};
-    if (pins[1] & B_01)
-      b[0] |= BUTTON_01;
-    if (pins[1] & B_02)
-      b[0] |= BUTTON_02;
-    if (pins[1] & B_03)
-      b[0] |= BUTTON_03;
-    if (pins[1] & B_04)
-      b[0] |= BUTTON_04;
-    if (pins[0] & B_05)
-      b[0] |= BUTTON_05;
-    if (pins[0] & B_06)
-      b[0] |= BUTTON_06;
-    if (pins[0] & B_07)
-      b[0] |= BUTTON_07;
-    if (pins[0] & B_08)
-      b[0] |= BUTTON_08;
-    if (pins[0] & B_09)
-      b[1] |= BUTTON_09;
-    if (pins[0] & B_10)
-      b[1] |= BUTTON_10;
-    if (pins[0] & B_11)
-      b[1] |= BUTTON_11;
-    if (pins[0] & B_12)
-      b[1] |= BUTTON_12;
-
-    usb_gamepad_action(x, y, b);
-    if (x != 128 || y != 128 || b[0] != 0 || b[1] != 0)
-	{
-      //PORTC |= (1<<7);
-      LED_ON;
-	}
-    else
-	{
-      //PORTC &= ~(1<<7);
-      LED_OFF;
-	}
+    /* Turn on the LED if any button is pressed, otherwise turn it off */
+    int i = 0;
+    for (; i < NUM_CONTROLLER_STATE_BYTES; ++i)
+    {
+      if (pins[i] != 0)
+      {
+        //LED_ON;
+        PORTC |= PIN_07;
+        break;
+      }
+    }
+    if (i == NUM_CONTROLLER_STATE_BYTES)
+    {
+      //LED_OFF;
+      PORTC &= ~PIN_07;
+    }
   }
 
-  LED_OFF;
 }
