@@ -1,0 +1,22 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: ArcadeJoystick.PcbDoc   1/22/2014  5:02:00 PM
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : ArcadeJoystick.TXT
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        0.4mm (15.748mil)        Round          10               12.29 mm (0.48 Inch)
+T2        0.5mm (19.685mil)        Round          2                2.11 mm (0.08 Inch)
+T3        0.51mm (20.079mil)       Round          42               232.67 mm (9.16 Inch)
+T4        0.6mm (23.622mil)        Round          2                2.24 mm (0.09 Inch)
+T5        0.7mm (27.559mil)        Round          2                4.12 mm (0.16 Inch)
+T6        0.8mm (31.496mil)        Round          2                3.13 mm (0.12 Inch)
+T7        0.9mm (35.433mil)        Round          78               302.04 mm (11.89 Inch)
+T8        1mm (39.37mil)           Round          31               323.26 mm (12.73 Inch)
+T9        2.95mm (116.142mil)      Round          4         NPTH   237.24 mm (9.34 Inch)
+---------------------------------------------------------------------------
+Totals                                            173              1119.09 mm (44.06 Inch)
+
+Total Processing Time (hh:mm:ss) : 00:00:00
