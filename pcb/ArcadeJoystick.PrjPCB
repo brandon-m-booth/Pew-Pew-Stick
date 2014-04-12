@@ -64,7 +64,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 
 [Document3]
-DocumentPath=..\..\Users\bbooth\AppData\Local\Temp\History\ArcadeJoystick.~(101).PcbLib
+DocumentPath=ArcadeJoystick.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
