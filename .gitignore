@@ -4,7 +4,7 @@
 *.o
 *.eep
 *.elf
-*.hex
+src/*.hex
 *.lss
 *.map
 *.sym
